@@ -1,0 +1,33 @@
+{{>header}}
+<p>Inscripcion de cursos</p>
+
+{{cursosDisponibles}}
+<form method="POST">
+    <div class="form-group">
+        <div class="col">
+            <label>Documento de identidad</label>
+            <input type="text" class="form-control" name="dni" placeholder="Numero de documento" required>
+        </div>
+        <div class="col">
+            <label>nombre</label>
+            <input type="text" class="form-control" name="nombre" placeholder="Nombre completo" required>
+        </div>
+        <div class="col">
+            <label>Correo</label>
+            <input type="email" class="form-control" name="correo" placeholder="af@example.com" required>
+        </div>
+        <div class="col">
+            <label>Telefono</label>
+            <input type="text" class="form-control currency" name="telefono" placeholder="telefono" required>
+        </div>
+        <div class="col">
+            <label>Curso a inscribir</label>
+            <input type="text" class="form-control currency" name="idcurso" placeholder="Ingrese el id del curso a inscribir" required>
+        </div>
+        <br>
+        <button type="submit" class="btn btn-primary" >Matricular</button><br>
+    </div>
+</form>
+<h1>{{mensajeMatricula}}</h1>
+
+{{>footer}}

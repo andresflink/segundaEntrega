@@ -1,0 +1,38 @@
+[
+    {
+        "nombre": "Matematicas basicas",
+        "id": "1",
+        "descripcion": "Curso introductorio de matematicas",
+        "valor": "1000000",
+        "modalidad": "virtual",
+        "intensidad": "50",
+        "estado": "disponible"
+    },
+    {
+        "nombre": "Geometria vectorial y analitica",
+        "id": "2",
+        "descripcion": "Curso Geometria vectorial y analitca",
+        "valor": "2000000",
+        "modalidad": "presencial",
+        "intensidad": "60",
+        "estado": ""
+    },
+    {
+        "nombre": "Ingles I",
+        "id": "3",
+        "descripcion": "Curso introductorio de Ingles",
+        "valor": "4000000",
+        "modalidad": "presencial",
+        "intensidad": "70",
+        "estado": "disponible"
+    },
+    {
+        "nombre": "Ingles II",
+        "id": "4",
+        "descripcion": "Ingles II",
+        "valor": "1000000",
+        "modalidad": "presencial",
+        "estado": "disponible",
+        "intensidad": "45"
+    }
+]

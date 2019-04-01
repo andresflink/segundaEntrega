@@ -1,0 +1,33 @@
+[
+    {
+        "nombre": "Andres",
+        "dni": "C12345",
+        "descripcion": "Curso introductorio de matematicas",
+        "correo": "afarboleda@hotmail.com",
+        "telefono": "4567890",
+        "cursos": [
+            "2",
+            "3"
+        ]
+    },
+    {
+        "nombre": "Yerson",
+        "dni": "C12345",
+        "descripcion": "Curso introductorio de matematicas",
+        "correo": "afarboleda@hotmail.com",
+        "telefono": "4567890",
+        "cursos": [
+            "3"
+        ]
+    },
+    {
+        "nombre": "Polly",
+        "dni": "C1",
+        "correo": "af@unal.edu.co",
+        "telefono": "123",
+        "cursos": [
+            "1",
+            "2"
+        ]
+    }
+]

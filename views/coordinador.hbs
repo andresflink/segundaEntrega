@@ -1,0 +1,44 @@
+{{>header}}
+<p>Crear Curso</p>
+
+<form method="POST">
+    <div class="form-group">
+        <div class="col">
+            <label>Nombre curso</label>
+            <input type="text" class="form-control" name="nombre" placeholder="Nombre del curso" required>
+        </div>
+        <div class="col">
+            <label>ID curso</label>
+            <input type="number" class="form-control" name="id" placeholder="ID" required>
+        </div>
+        <div class="col">
+            <label>Descripcion</label>
+            <input type="text" class="form-control" name="descripcion" placeholder="Descripcion del curso" required>
+        </div>
+        <div class="col">
+            <label>Valor</label>
+            <input type="number" class="form-control currency" name="valor" placeholder="Costo del curso" required>
+        </div>
+        <div class="col">
+            <label>Modalidad</label>
+            <input type="text" class="form-control currency" name="modalidad" placeholder="Modalidad del curso">
+        </div>
+        <div class="col">
+            <label>Intensidad horaria</label>
+            <input type="number" class="form-control" name="intensidad"
+                placeholder="Intensidad horaria (horas/Semestre)" required>
+        </div>
+        <br>
+        <button type="submit" class="btn btn-primary">Crear curso</button><br>
+    </div>
+</form>
+<h1>{{mensajeCrear}}</h1>
+
+
+<p>Listar Cursos</p>
+{{{listarCursos}}}
+<p>Lista de estudiantes Inscritos </p>
+
+{{{listarEstudiantesCursos}}}
+
+{{>footer}}

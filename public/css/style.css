@@ -1,0 +1,30 @@
+body {
+	color: grey;
+	font-family: arial;
+	min-height: 100vh;
+}
+
+footer {
+	color: darkcyan;
+	border-top: 2px solid darkcyan;
+	margin-top: 16px;
+
+}
+
+header {
+	margin-top: 16px;
+	margin-bottom: 48px;
+}
+
+h1 {
+	align-content: center;
+	font-size: 43px;
+	margin-bottom: 16px;
+	text-align: center 
+}
+
+h3 {
+	color:green;
+	margin-bottom: 16px;
+	text-align: center 
+}

@@ -1,13 +1,11 @@
 const hbs = require('hbs');
-const funcionesCursos = require('../funcionesCursos');
-const funcionesMatriculas = require('../funcionesMatriculas');
-const funcionesEstudiantes = require('../funcionesEstudiantes');
+const Estudiante = require('../../models/estudiante');
 
-hbs.registerHelper('listarCursosDisponibles', () => {
-    listaCursos = funcionesCursos.mostrarCursosDisponibles()
+
+hbs.registerHelper('listarCursosDisponibles', (listado) => {
     let texto = '<div class="accordion" id="accordionExample">';
     i = 1;
-    listaCursos.forEach(curso => {
+    listado.forEach(curso => {
         texto = texto +
             `<div class="card">
             <div class="card-header" id="heading${i}">
@@ -45,26 +43,24 @@ hbs.registerHelper('listarCursosDisponibles', () => {
     return texto = texto + '</div>';
 });
 
-hbs.registerHelper('NombresCursos', () => {
-    cursosDisponibles = funcionesCursos.mostrarCursosDisponibles()
+
+hbs.registerHelper('NombresCursos', (listado) => {
     let texto = ""
-    cursosDisponibles.forEach(curso => {
-
+    listado.forEach(curso => {
         texto += `<option value ="${curso.id}"> ${curso.nombre} </option>`
-
     })
     return texto
 });
 
-hbs.registerHelper('listarMatriculas', () => {
+hbs.registerHelper('listarMatriculas', (cursos, matriculas, estudiantes) => {
     texto = ""
-    listaCursos = funcionesCursos.mostrarCursosDisponibles();
-    listaMatriculas = funcionesMatriculas.listarMatriculas();
-
+    listaCursos = cursos;
+    listaMatriculas = matriculas;
+    listaEstudiantes = estudiantes;
     listaCursos.forEach(curso => {
 
-        texto += 
-        `<table class='table table-hover'> 
+        texto +=
+            `<table class='table table-hover'> 
             <thead class='thead-dark'>
                 <tr>
                     <th colspan="5" style="text-align:center">${curso.nombre}</th>
@@ -87,9 +83,7 @@ hbs.registerHelper('listarMatriculas', () => {
         listaMatriculas.forEach(matricula => {
             if (curso.id === matricula.CursoID) {
 
-                let estudiante = funcionesEstudiantes.buscarEstudiante(matricula.dniEstudiante);
-
-
+                let estudiante = listaEstudiantes.find(est => est.dni == matricula.dniEstudiante);
                 texto += `<tr>
                         <td>${estudiante.dni}</td>
                         <td>${estudiante.nombre}</td>
@@ -100,7 +94,9 @@ hbs.registerHelper('listarMatriculas', () => {
                             <input type="hidden" name="cursoID" value="${curso.id}">
                             <button class="btn btn-info" type="submit">Eliminar</button>
                         </form></td>
-                        </tr>`}
+                        </tr>`
+
+            }
         })
         texto += `</table>`
 

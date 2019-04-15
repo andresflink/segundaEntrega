@@ -1,7 +1,7 @@
 {{>header}}
 <div class="container">
     <h1>Crear Curso</h1>
-
+    <h2>{{mensajeCrear}}</h2>
     <form method="POST">
         <div class="form-group">
             <div class="col">
@@ -26,6 +26,7 @@
                 <select class="custom-select" id="inputGroupSelect01" name="modalidad">
                     <option value="presencial">Presencial</option>
                     <option value="virtual">Virtual</option>
+                    <option value=""></option>
                 </select>
             </div>
             <div class="col">
@@ -38,7 +39,7 @@
         </div>
     </form>
 </div>
-<h1>{{mensajeCrear}}</h1>
+
 </div>
 
 {{>footer}}

@@ -1,8 +1,7 @@
 {{>header}}
 <div class="container">
     <h1>Inscripcion de cursos</h1>
-
-    {{cursosDisponibles}}
+    <h3>{{mensajeMatricula}}</h3>
     <form method="POST">
         <div class="form-group">
             <div class="col">
@@ -26,7 +25,7 @@
                     <div class="form-group col-md-6">
                         <label for="Cursos">Curso a inscribir</label>
                         <select class="form-control" name="idCurso">
-                            {{{NombresCursos}}}
+                            {{{NombresCursos listado}}}
                         </select>
                     </div>
                 </div>
@@ -35,6 +34,5 @@
             <button type="submit" class="btn btn-info">Matricular</button><br>
         </div>
     </form>
-    <h3>{{mensajeMatricula}}</h3>
 </div>
 {{>footer}}

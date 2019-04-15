@@ -39,8 +39,10 @@ app.listen(process.env.port, () => {
     console.log('Escuchando en el puerto 3000');
 });
 
-mongoose.connect('mongodb://localhost:27017/matriculas', { useNewUrlParser: true }, (error, resultado) => {
-    if (error) console.log(error);
+mongoose.connect(process.env.URLDB, { useNewUrlParser: true }, (error, resultado) => {
+    if (error) {
+        return console.log(error);
+    }
     console.log('Conectado a DB matriculas');
 
 });

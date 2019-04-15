@@ -285,3 +285,10 @@ app.post('/eliminarMatricula', (req, res) => {
         })
     });
 });
+
+
+app.get('*', (req, res) => {
+    res.render('error', {
+        titulo: 'error'
+    });
+});

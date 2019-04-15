@@ -35,11 +35,14 @@ require('./helpers/helperCursos');
 
 
 
-app.listen(process.env.port, () => {
+app.listen(3000, (error, resultado) => {
+    if (error) {
+        return console.log(error);
+    }
     console.log('Escuchando en el puerto 3000');
 });
 
-mongoose.connect(process.env.URLDB, { useNewUrlParser: true }, (error, resultado) => {
+mongoose.connect(urlDB = 'mongodb://localhost:27017/matriculas', { useNewUrlParser: true }, (error, resultado) => {
     if (error) {
         return console.log(error);
     }

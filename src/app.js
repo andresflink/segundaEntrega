@@ -35,7 +35,7 @@ require('./helpers/helperCursos');
 
 
 
-app.listen(3000, () => {
+app.listen(process.env.port, () => {
     console.log('Escuchando en el puerto 3000');
 });
 
@@ -52,12 +52,6 @@ app.get('/', (req, res) => {
     });
 });
 
-/*
-app.get('/listarCursos', (req, res) => {
-    res.render('listarCursos', {
-        titulo: 'Listar Cursos'
-    });
-});*/
 
 app.get('/listarCursos', (req, res) => {
 

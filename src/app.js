@@ -5,6 +5,7 @@ const hbs = require('hbs');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
+
 //Modelos
 const Estudiante = require('../models/estudiante');
 const Curso = require('../models/curso');
@@ -35,14 +36,14 @@ require('./helpers/helperCursos');
 
 
 
-app.listen(3000, (error, resultado) => {
+app.listen(process.env.PORT, (error, resultado) => {
     if (error) {
         return console.log(error);
     }
     console.log('Escuchando en el puerto 3000');
 });
 
-mongoose.connect(urlDB = 'mongodb://localhost:27017/matriculas', { useNewUrlParser: true }, (error, resultado) => {
+mongoose.connect(process.env.URLDB, { useNewUrlParser: true }, (error, resultado) => {
     if (error) {
         return console.log(error);
     }
@@ -57,21 +58,23 @@ app.get('/', (req, res) => {
     });
 });
 
-
 app.get('/listarCursos', (req, res) => {
-
-    Curso.find({ estado: 'disponible' }).exec((err, respuesta) => {
-        if (err) {
-            return console.log(err)
-        }
+    var promise = getCursosDisponibles();
+    promise.then(function(respuesta){
         res.render('listarCursos', {
             listado: respuesta,
             titulo: 'Listar Cursos'
         });
-
-    });
+    }).catch(function(error){
+        console.log('Error al buscar cursos'+ error)
+    })
 });
 
+
+ function getCursosDisponibles(){
+    var promise = Curso.find({estado:'disponible'}).exec();
+    return promise;
+ }
 
 app.get('/crearCurso', (req, res) => {
     res.render('crearCurso', {
@@ -110,19 +113,16 @@ app.post('/crearCurso', (req, res) => {
 });
 
 app.get('/inscribirCurso', (req, res) => {
-    Curso.find({ estado: 'disponible' }).exec((err, cursosDisponibles) => {
-        if (err) {
-            return console.log(err)
-        }
+    var promise = getCursosDisponibles();
+    promise.then(function(cursosDisponibles){
         res.render('inscribirCurso', {
             listado: cursosDisponibles,
             titulo: 'Vista de aspirante'
         });
-
-    });
-
+    }).catch(function(error){
+        console.log('Error al inscribir cursos'+ error)
+    })
 });
-
 
 app.post('/inscribirCurso', (req, res) => {
     body = req.body;
@@ -147,11 +147,8 @@ app.post('/inscribirCurso', (req, res) => {
         if (error) return console.log(err);
     });
 
-    Curso.find({ estado: 'disponible' }).exec((err, cursosDisponibles) => {
-        if (err) {
-            return console.log(err)
-        }
-
+    var promise = getCursosDisponibles();
+    promise.then(function(cursosDisponibles){
         matricula.save((err, matricula) => {
             if (err) {
                 res.render('inscribirCurso', {
@@ -169,17 +166,15 @@ app.post('/inscribirCurso', (req, res) => {
                 });
             }
         });
-
-
-    });
+    }).catch(function(error){
+        console.log('Error al inscribir cursos'+ error);
+    })
 
 });
 
 app.get('/listarMatriculas', (req, res) => {
-    Curso.find({ estado: 'disponible' }).exec((err, cursosDisponibles) => {
-        if (err) {
-            return console.log(err)
-        }
+    var promise = getCursosDisponibles();
+    promise.then(function(cursosDisponibles){
         Matricula.find({}).exec((err, matricu) => {
             if (err) {
                 return console.log(err)
@@ -195,15 +190,11 @@ app.get('/listarMatriculas', (req, res) => {
                     estudiantes: estu
                 });
             })
-
-
         })
+    }).catch(function(error){
+        console.log('Error al listar Matriculas'+ error);
     });
 });
-
-
-
-
 
 app.post('/cerrarCurso', (req, res) => {
     body = req.body;
@@ -218,10 +209,8 @@ app.post('/cerrarCurso', (req, res) => {
                 return console.log(err)
             }
             Curso.findOneAndUpdate({ id: body.idEliminar }, { 'estado': 'cerrado' }, (err, resultado) => {
-                Curso.find({ estado: 'disponible' }).exec((err, cursosDisponibles) => {
-                    if (err) {
-                        return console.log(err)
-                    }
+                var promise = getCursosDisponibles();
+                promise.then(function(cursosDisponibles){
                     res.render('listarMatriculas', {
                         titulo: 'Lista De Matriculas',
                         cursos: cursosDisponibles,
@@ -234,12 +223,9 @@ app.post('/cerrarCurso', (req, res) => {
     });
 });
 
-
 app.get('/cerrarCurso', (req, res) => {
-    Curso.find({ estado: 'disponible' }).exec((err, cursosDisponibles) => {
-        if (err) {
-            return console.log(err)
-        }
+    var promise = getCursosDisponibles();
+    promise.then(function(cursosDisponibles){
         Matricula.find({}).exec((err, matricu) => {
             if (err) {
                 return console.log(err)
@@ -259,15 +245,11 @@ app.get('/cerrarCurso', (req, res) => {
     });
 });
 
-
 app.post('/eliminarMatricula', (req, res) => {
     body = req.body;
     console.log(body.idEliminar);
-
-    Curso.find({ estado: 'disponible' }).exec((err, cursosDisponibles) => {
-        if (err) {
-            return console.log(err)
-        }
+    var promise = getCursosDisponibles();
+    promise.then(function(cursosDisponibles){
         Estudiante.find({}).exec((err, estu) => {
             if (err) {
                 return console.log(err)
@@ -289,9 +271,9 @@ app.post('/eliminarMatricula', (req, res) => {
     });
 });
 
-
 app.get('*', (req, res) => {
     res.render('error', {
         titulo: 'error'
     });
 });
+

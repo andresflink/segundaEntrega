@@ -26,6 +26,7 @@ hbs.registerHelper('listarCursosDisponibles', (listado) => {
                     <th> Descripcion </th>
                     <th> Modalidad </th>
                     <th> Intensidad </th>
+                    <th> Estado </th>
 
                 </thead>
                 <tbody>
@@ -33,6 +34,7 @@ hbs.registerHelper('listarCursosDisponibles', (listado) => {
                         <td>${curso.descripcion} </td>
                         <td>${curso.modalidad} </td>
                         <td>${curso.intensidad} </td>
+                        <td>${curso.estado} </td>
                     </tr>
                 </tbody>
             </table>

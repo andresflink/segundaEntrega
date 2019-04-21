@@ -4,14 +4,15 @@ const path = require('path');
 const hbs = require('hbs');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const session = require('express-session')
 
 
 //Modelos
 const Estudiante = require('../models/estudiante');
 const Curso = require('../models/curso');
 const Matricula = require('../models/matricula');
-
-
+const Usuario = require('../models/usuario');
 
 
 app.set('view engine', 'hbs');
@@ -36,51 +37,87 @@ require('./helpers/helperCursos');
 
 
 
-app.listen(process.env.PORT, (error, resultado) => {
+app.listen(3000, (error, resultado) => {
     if (error) {
-        return console.log(error);
+        return console.log('Error al conectarse a el servidor ' + error);
     }
     console.log('Escuchando en el puerto 3000');
 });
 
-mongoose.connect(process.env.URLDB, { useNewUrlParser: true }, (error, resultado) => {
+mongoose.connect('mongodb://localhost:27017/asignaturas', { useNewUrlParser: true }, (error, resultado) => {
     if (error) {
-        return console.log(error);
+        return console.log('Error al conectarse al la BD ' + error);
     }
-    console.log('Conectado a DB matriculas');
+    console.log('Conectado a DB Asignaturas');
 
 });
+
+app.use(session({
+    cookie: { maxAge: 86400000 },
+    secret: 'keyboard cat',
+    resave: true,
+    saveUninitialized: true
+}))
+
+
+app.use((req, res, next) => {
+    if (req.session.usuario) {
+        res.locals.sesion = true
+        res.locals.nombre = req.session.nombre
+        res.locals.rol = req.session.rol
+    }
+    next()
+})
 
 
 app.get('/', (req, res) => {
     res.render('home', {
-        titulo: 'Bienvenido a la aplicacion'
+        titulo: 'Bienvenido a la aplicacion',
+        mensaje: 'Bienvenido a la entrega 2'
     });
 });
 
-app.get('/listarCursos', (req, res) => {
+
+app.get('/listarCursosDisponibles', (req, res) => {
     var promise = getCursosDisponibles();
-    promise.then(function(respuesta){
+    promise.then(function (respuesta) {
         res.render('listarCursos', {
             listado: respuesta,
             titulo: 'Listar Cursos'
         });
-    }).catch(function(error){
-        console.log('Error al buscar cursos'+ error)
+    }).catch(function (error) {
+        console.log('Error al buscar cursos' + error)
     })
 });
 
+app.get('/listarCursos', (req, res) => {
+    var promise = getCursos();
+    promise.then(function (respuesta) {
+        res.render('listarCursos', {
+            listado: respuesta,
+            titulo: 'Listar Cursos'
+        });
+    }).catch(function (error) {
+        console.log('Error al buscar cursos' + error)
+    })
+});
 
- function getCursosDisponibles(){
-    var promise = Curso.find({estado:'disponible'}).exec();
+function getCursosDisponibles() {
+    var promise = Curso.find({ estado: 'disponible' }).exec();
     return promise;
- }
+}
+
+function getCursos() {
+    var promise = Curso.find({}).exec();
+    return promise;
+}
 
 app.get('/crearCurso', (req, res) => {
     res.render('crearCurso', {
         titulo: 'Vista de coordinador'
     });
 });
+
 
 app.post('/crearCurso', (req, res) => {
     let curso = new Curso({
@@ -92,6 +129,7 @@ app.post('/crearCurso', (req, res) => {
         estado: req.body.estado,
         intensidad: req.body.intensidad
     });
+
 
     curso.save((err, resultado) => {
         console.log(err);
@@ -112,15 +150,16 @@ app.post('/crearCurso', (req, res) => {
 
 });
 
+
 app.get('/inscribirCurso', (req, res) => {
-    var promise = getCursosDisponibles();
-    promise.then(function(cursosDisponibles){
+    var promiseCursos = getCursosDisponibles();
+    promiseCursos.then(function (cursosDisponibles) {
         res.render('inscribirCurso', {
             listado: cursosDisponibles,
             titulo: 'Vista de aspirante'
         });
-    }).catch(function(error){
-        console.log('Error al inscribir cursos'+ error)
+    }).catch(function (error) {
+        console.log('Error al inscribir cursos' + error)
     })
 });
 
@@ -148,7 +187,7 @@ app.post('/inscribirCurso', (req, res) => {
     });
 
     var promise = getCursosDisponibles();
-    promise.then(function(cursosDisponibles){
+    promise.then(function (cursosDisponibles) {
         matricula.save((err, matricula) => {
             if (err) {
                 res.render('inscribirCurso', {
@@ -166,15 +205,15 @@ app.post('/inscribirCurso', (req, res) => {
                 });
             }
         });
-    }).catch(function(error){
-        console.log('Error al inscribir cursos'+ error);
+    }).catch(function (error) {
+        console.log('Error al inscribir cursos' + error);
     })
-
 });
+
 
 app.get('/listarMatriculas', (req, res) => {
     var promise = getCursosDisponibles();
-    promise.then(function(cursosDisponibles){
+    promise.then(function (cursosDisponibles) {
         Matricula.find({}).exec((err, matricu) => {
             if (err) {
                 return console.log(err)
@@ -191,10 +230,11 @@ app.get('/listarMatriculas', (req, res) => {
                 });
             })
         })
-    }).catch(function(error){
-        console.log('Error al listar Matriculas'+ error);
+    }).catch(function (error) {
+        console.log('Error al listar Matriculas' + error);
     });
 });
+
 
 app.post('/cerrarCurso', (req, res) => {
     body = req.body;
@@ -210,7 +250,7 @@ app.post('/cerrarCurso', (req, res) => {
             }
             Curso.findOneAndUpdate({ id: body.idEliminar }, { 'estado': 'cerrado' }, (err, resultado) => {
                 var promise = getCursosDisponibles();
-                promise.then(function(cursosDisponibles){
+                promise.then(function (cursosDisponibles) {
                     res.render('listarMatriculas', {
                         titulo: 'Lista De Matriculas',
                         cursos: cursosDisponibles,
@@ -223,9 +263,10 @@ app.post('/cerrarCurso', (req, res) => {
     });
 });
 
+
 app.get('/cerrarCurso', (req, res) => {
     var promise = getCursosDisponibles();
-    promise.then(function(cursosDisponibles){
+    promise.then(function (cursosDisponibles) {
         Matricula.find({}).exec((err, matricu) => {
             if (err) {
                 return console.log(err)
@@ -245,11 +286,12 @@ app.get('/cerrarCurso', (req, res) => {
     });
 });
 
+
 app.post('/eliminarMatricula', (req, res) => {
     body = req.body;
     console.log(body.idEliminar);
     var promise = getCursosDisponibles();
-    promise.then(function(cursosDisponibles){
+    promise.then(function (cursosDisponibles) {
         Estudiante.find({}).exec((err, estu) => {
             if (err) {
                 return console.log(err)
@@ -271,9 +313,97 @@ app.post('/eliminarMatricula', (req, res) => {
     });
 });
 
+
+app.get('/crearUsuario', (req, res) => {
+    res.render('crearUsuario', {
+        titulo: 'Registro de usuarios nuevos',
+        mensaje: ''
+    });
+});
+
+
+app.post('/crearUsuario', (req, res) => {
+    let usuario = new Usuario({
+        dni: req.body.dni,
+        nombre: req.body.nombre,
+        usuario: req.body.usuario,
+        password: bcrypt.hashSync(req.body.password, 10),
+        correo: req.body.correo,
+        telefono: req.body.telefono,
+        rol: req.body.rol
+    })
+    console.log('usuario');
+    console.log(usuario);
+    usuario.save((err, resultado) => {
+        if (err) {
+            console.log('error');
+            console.log(err);
+            res.render('crearUsuario', {
+                titulo: 'Registro de usuarios nuevos',
+                mensaje: 'El dni ingresado ya fue registrado'
+            });
+        } else {
+            res.render('crearUsuario', {
+                titulo: 'Registro de usuarios nuevos',
+                mensaje: 'Usuario : ' + resultado.nombre + ' Creado correctamente'
+            })
+        }
+    })
+});
+
+
+app.post('/ingresar', (req, res) => {
+    Usuario.findOne({ usuario: req.body.usuario }, (err, resultados) => {
+        if (err) {
+            return console.log(err)
+        }
+        if (!resultados) {
+            return res.render('home', {
+                mensaje: "Usuario no encontrado"
+            })
+        }
+        if (!bcrypt.compareSync(req.body.password, resultados.password)) {
+            return res.render('home', {
+                mensaje: "Contraseña no es correcta"
+            })
+        }
+        //Para crear las variables de sesión
+        req.session.usuario = resultados._id;
+        req.session.nombre = resultados.nombre;
+        let rol = asignarRol(resultados);
+        req.session.rol = rol;
+        console.log('Session ' + req.session.rol);
+        console.log('Rol ' + rol)
+        res.render
+        res.render('home', {
+            mensaje: "Bienvenido " + resultados.rol + ' ' + resultados.nombre.toUpperCase(),
+            nombre: resultados.nombre,
+            sesion: true,
+            rol: rol
+        })
+    })
+})
+
+
+app.get('/salir', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) return console.log(err)
+    })
+    res.redirect('/')
+})
+
+
 app.get('*', (req, res) => {
     res.render('error', {
         titulo: 'error'
     });
 });
 
+
+function asignarRol(resultados) {
+    if (resultados.rol === 'coordinador') {
+        return true;
+    } else {
+        return false;
+    }
+}

@@ -1,0 +1,43 @@
+{{>header}}
+<h3>{{mensaje}}</h3>
+<div class="container">
+    <h1>Creacion de usuarios</h1>
+    <form method="POST">
+        <div class="form-group">
+            <div class="col">
+                <label>Documento de identidad</label>
+                <input type="text" class="form-control" name="dni" placeholder="Numero de documento" required>
+            </div>
+            <div class="col">
+                <label>Nombre</label>
+                <input type="text" class="form-control" name="nombre" placeholder="Nombre completo" required>
+            </div>
+             <div class="col">
+                <label>Usuario</label>
+                <input type="text" class="form-control" name="usuario" placeholder="usuario" required>
+            </div>
+            <div class="col">
+                <label>Contraseña</label>
+                <input type="text" class="form-control" name="password" placeholder="contraseña" required>
+            </div>
+            <div class="col">
+                <label>Correo</label>
+                <input type="email" class="form-control" name="correo" placeholder="af@example.com" required>
+            </div>
+            <div class="col">
+                <label>Telefono</label>
+                <input type="text" class="form-control currency" name="telefono" placeholder="telefono" required>
+            </div>
+            <div class="col">
+                <label>Rol</label>
+                <select class="custom-select" id="inputGroupSelect01" name="rol">
+                    <option value="aspirante">Aspirante</option>
+                    <option value="coordinador">Coordinador</option>
+                </select>
+            </div>
+            <br>
+            <button type="submit" class="btn btn-info">Crear Usuario</button><br>
+        </div>
+    </form>
+</div>
+{{>footer}}

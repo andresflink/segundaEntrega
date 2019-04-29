@@ -1,5 +1,9 @@
 {{>header}}
 <div class="container">
     <h3>{{mensaje}}</h3>
+    <br>
+    {{#if documento}}
+    <img src="data:img/png;base64,{{documento}}" class="img-fluid" alt="Responsive image">
+    {{/if}}
 </div>
 {{>footer}}

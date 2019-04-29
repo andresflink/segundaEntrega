@@ -2,7 +2,7 @@
 <h3>{{mensaje}}</h3>
 <div class="container">
     <h1>Creacion de usuarios</h1>
-    <form method="POST">
+    <form action="/crearUsuario" method="POST" enctype="multipart/form-data">
         <div class="form-group">
             <div class="col">
                 <label>Documento de identidad</label>
@@ -12,13 +12,13 @@
                 <label>Nombre</label>
                 <input type="text" class="form-control" name="nombre" placeholder="Nombre completo" required>
             </div>
-             <div class="col">
+            <div class="col">
                 <label>Usuario</label>
                 <input type="text" class="form-control" name="usuario" placeholder="usuario" required>
             </div>
             <div class="col">
                 <label>Contraseña</label>
-                <input type="text" class="form-control" name="password" placeholder="contraseña" required>
+                <input type="password" class="form-control" name="password" placeholder="contraseña" required>
             </div>
             <div class="col">
                 <label>Correo</label>
@@ -34,6 +34,11 @@
                     <option value="aspirante">Aspirante</option>
                     <option value="coordinador">Coordinador</option>
                 </select>
+            </div>
+            <br>
+            <div class="col">
+                <label>Foto de perfil  : </label>
+                <input type="file" name="archivo" accept="image/*"required />
             </div>
             <br>
             <button type="submit" class="btn btn-info">Crear Usuario</button><br>

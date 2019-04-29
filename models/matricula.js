@@ -13,6 +13,10 @@ const matriculaSchema = new Schema({
         type: String,
         require: true,
         trim: true
+    },
+    comprobante : {
+        type : Buffer,
+        require: true
     }
 });
 

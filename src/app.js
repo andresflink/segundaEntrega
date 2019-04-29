@@ -6,6 +6,8 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const session = require('express-session')
+var multer = require('multer')
+
 
 
 //Modelos
@@ -65,12 +67,20 @@ app.use((req, res, next) => {
         res.locals.sesion = true
         res.locals.nombre = req.session.nombre
         res.locals.rol = req.session.rol
+        res.locals.documento = req.session.documento
     }
     next()
 })
 
 
 app.get('/', (req, res) => {
+    res.render('home', {
+        titulo: 'Bienvenido a la aplicacion',
+        mensaje: 'Bienvenido a la entrega 2'
+    });
+});
+
+app.post('/', (req, res) => {
     res.render('home', {
         titulo: 'Bienvenido a la aplicacion',
         mensaje: 'Bienvenido a la entrega 2'
@@ -163,7 +173,21 @@ app.get('/inscribirCurso', (req, res) => {
     })
 });
 
-app.post('/inscribirCurso', (req, res) => {
+var uploadMatriculas = multer({
+    limits: {
+        fileSize: 10000000
+    },
+    fileFilter(req, file, cb) {
+        cb(null, false)
+        if(!file.originalname.match(/\.(jpg|png|jpeg)$/)){
+            cb(new Error('No es un archivo con extencion valida'))
+        }
+        cb(null, true)
+    }
+})
+
+app.post('/inscribirCurso',uploadMatriculas.single('comprobante') , (req, res) => {
+    console.log(req.file);
     body = req.body;
     let estudiante = new Estudiante({
         dni: body.dni,
@@ -175,7 +199,8 @@ app.post('/inscribirCurso', (req, res) => {
     let matricula = new Matricula(
         {
             "dniEstudiante": body.dni,
-            "CursoID": body.idCurso
+            "CursoID": body.idCurso,
+            "comprobante" : req.file.buffer
         }
     )
 
@@ -322,7 +347,25 @@ app.get('/crearUsuario', (req, res) => {
 });
 
 
-app.post('/crearUsuario', (req, res) => {
+
+var upload = multer({
+    limits: {
+        fileSize: 10000000
+    },
+    fileFilter(req, file, cb) {
+        cb(null, false)
+        if(!file.originalname.match(/\.(jpg|png|jpeg)$/)){
+            cb(new Error('No es un archivo con extencion valida'))
+        }
+        cb(null, true)
+    }
+})
+
+app.post('/crearUsuario', upload.single('archivo'), (req, res) => {
+    if(req.file){
+        var archivo = req.file.buffer;
+    }
+
     let usuario = new Usuario({
         dni: req.body.dni,
         nombre: req.body.nombre,
@@ -330,10 +373,10 @@ app.post('/crearUsuario', (req, res) => {
         password: bcrypt.hashSync(req.body.password, 10),
         correo: req.body.correo,
         telefono: req.body.telefono,
-        rol: req.body.rol
+        rol: req.body.rol,
+        documento: archivo
     })
-    console.log('usuario');
-    console.log(usuario);
+
     usuario.save((err, resultado) => {
         if (err) {
             console.log('error');
@@ -370,6 +413,9 @@ app.post('/ingresar', (req, res) => {
         //Para crear las variables de sesión
         req.session.usuario = resultados._id;
         req.session.nombre = resultados.nombre;
+
+        documento = resultados.documento.toString('base64');
+        req.session.documento = documento;
         let rol = asignarRol(resultados);
         req.session.rol = rol;
         console.log('Session ' + req.session.rol);
@@ -379,7 +425,8 @@ app.post('/ingresar', (req, res) => {
             mensaje: "Bienvenido " + resultados.rol + ' ' + resultados.nombre.toUpperCase(),
             nombre: resultados.nombre,
             sesion: true,
-            rol: rol
+            rol: rol,
+            documento: documento
         })
     })
 })

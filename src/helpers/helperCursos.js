@@ -65,7 +65,7 @@ hbs.registerHelper('listarMatriculas', (cursos, matriculas, estudiantes) => {
             `<table class='table table-hover'> 
             <thead class='thead-dark'>
                 <tr>
-                    <th colspan="5" style="text-align:center">${curso.nombre}</th>
+                    <th colspan="6" style="text-align:center">${curso.nombre}</th>
                 </tr>
                 <td>
                 <form class="form-inline" action = "/cerrarCurso" method="POST">
@@ -80,6 +80,7 @@ hbs.registerHelper('listarMatriculas', (cursos, matriculas, estudiantes) => {
                         <td>Nombre</td>
                         <td>Correo</td>
                         <td>Telefono</td>
+                        <td>Comprobante Pago</td>
                         <td></td>
                     </tr>`
         listaMatriculas.forEach(matricula => {
@@ -91,6 +92,7 @@ hbs.registerHelper('listarMatriculas', (cursos, matriculas, estudiantes) => {
                         <td>${estudiante.nombre}</td>
                         <td>${estudiante.correo}</td>
                         <td>${estudiante.telefono}</td>
+                        <td> <img src="data:img/png;base64,${matricula.comprobante.toString('base64')}" class="img-fluid" alt="Responsive image" width="100" height="50"></td>
                         <td><form class="form-inline" action = "/eliminarMatricula" method="POST">
                             <input type="hidden" name="dniEstudiante" value="${estudiante.dni}">
                             <input type="hidden" name="cursoID" value="${curso.id}">

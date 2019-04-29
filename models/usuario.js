@@ -35,7 +35,10 @@ const usuarioSchema = new Schema({
     rol: {
         type: String,
         enum: { values: ['aspirante', 'coordinador'] }
-    }  
+    },
+    documento : {
+        type : Buffer
+    }, 
 });
 usuarioSchema.plugin(uniqueValidator, { message: 'Error, el dni: {VALUE} ya fue registrado.' });
 const Usuario = mongoose.model('Usuario', usuarioSchema);

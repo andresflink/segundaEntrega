@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const session = require('express-session')
+const sgMail = require('@sendgrid/mail');
 var multer = require('multer')
 
 
@@ -38,6 +39,7 @@ require('./helpers/helperCursos');
 
 
 
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 app.listen(3000, (error, resultado) => {
     if (error) {
@@ -122,6 +124,11 @@ function getCursos() {
     return promise;
 }
 
+function getCursoById(idCurso) {
+    var promise = Curso.find({'id':idCurso}).exec();
+    return promise;
+}
+
 app.get('/crearCurso', (req, res) => {
     res.render('crearCurso', {
         titulo: 'Vista de coordinador'
@@ -179,16 +186,17 @@ var uploadMatriculas = multer({
     },
     fileFilter(req, file, cb) {
         cb(null, false)
-        if(!file.originalname.match(/\.(jpg|png|jpeg)$/)){
+        if (!file.originalname.match(/\.(jpg|png|jpeg)$/)) {
             cb(new Error('No es un archivo con extencion valida'))
         }
         cb(null, true)
     }
 })
 
-app.post('/inscribirCurso',uploadMatriculas.single('comprobante') , (req, res) => {
+app.post('/inscribirCurso', uploadMatriculas.single('comprobante'), (req, res) => {
     console.log(req.file);
     body = req.body;
+
     let estudiante = new Estudiante({
         dni: body.dni,
         nombre: body.nombre,
@@ -200,7 +208,7 @@ app.post('/inscribirCurso',uploadMatriculas.single('comprobante') , (req, res) =
         {
             "dniEstudiante": body.dni,
             "CursoID": body.idCurso,
-            "comprobante" : req.file.buffer
+            "comprobante": req.file.buffer
         }
     )
 
@@ -354,7 +362,7 @@ var upload = multer({
     },
     fileFilter(req, file, cb) {
         cb(null, false)
-        if(!file.originalname.match(/\.(jpg|png|jpeg)$/)){
+        if (!file.originalname.match(/\.(jpg|png|jpeg)$/)) {
             cb(new Error('No es un archivo con extencion valida'))
         }
         cb(null, true)
@@ -362,9 +370,17 @@ var upload = multer({
 })
 
 app.post('/crearUsuario', upload.single('archivo'), (req, res) => {
-    if(req.file){
+    if (req.file) {
         var archivo = req.file.buffer;
     }
+
+    const msg = {
+        to: req.body.correo,
+        from: 'afarboledac@unal.edu.co',
+        subject: 'Bienvenido a la entrega final',
+        text: 'Entrega final del curso de node',
+        html: '<strong> ' + req.body.usuario +'!Bienvenido a la Entrega final del curso de node</strong>',
+    };
 
     let usuario = new Usuario({
         dni: req.body.dni,
@@ -386,6 +402,7 @@ app.post('/crearUsuario', upload.single('archivo'), (req, res) => {
                 mensaje: 'El dni ingresado ya fue registrado'
             });
         } else {
+            sgMail.send(msg);
             res.render('crearUsuario', {
                 titulo: 'Registro de usuarios nuevos',
                 mensaje: 'Usuario : ' + resultado.nombre + ' Creado correctamente'
